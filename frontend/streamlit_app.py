@@ -1019,23 +1019,30 @@ def render_ask_question():
             st.markdown(question)
 
         with st.chat_message("assistant"):
-            with st.spinner("🔎 Searching knowledge base and generating answer..."):
+            # Phase 1: Search the knowledge base (show spinner while doing RAG retrieval)
+            with st.spinner("🔎 Searching knowledge base..."):
                 answer_stream, error = ask_question(question)
 
-            if answer_stream is not None:
+            if error:
+                st.error(f"❌ {error}")
+            elif answer_stream is not None:
+                # Phase 2: Stream the answer token-by-token (no spinner — words appear live)
                 def stream_data():
                     if isinstance(answer_stream, str):
                         yield answer_stream
                     else:
-                        for chunk in answer_stream:
-                            if chunk.text:
-                                yield chunk.text
-                
-                # Streamlit's built-in fast streaming!
+                        try:
+                            for chunk in answer_stream:
+                                if hasattr(chunk, 'text') and chunk.text:
+                                    yield chunk.text
+                        except Exception:
+                            pass
+
                 answer = st.write_stream(stream_data())
-                st.session_state.messages.append({"role": "assistant", "content": answer})
+                if answer:
+                    st.session_state.messages.append({"role": "assistant", "content": answer})
             else:
-                st.error(f"❌ {error}")
+                st.error("❌ No answer was returned. Please try again.")
 
 
 # ============================================================
