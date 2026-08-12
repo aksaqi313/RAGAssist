@@ -740,8 +740,13 @@ with st.sidebar:
     )
 
     st.write("")
-    if st.button("🌓 Toggle Theme", key="theme_toggle", use_container_width=True):
-        st.session_state.theme = "light" if st.session_state.theme == "dark" else "dark"
+    st.markdown('<div class="kb-mini-label" style="margin-top: 10px;">APPEARANCE</div>', unsafe_allow_html=True)
+    is_dark = st.toggle("🌙 Dark Mode", value=(st.session_state.theme == "dark"))
+    if is_dark and st.session_state.theme == "light":
+        st.session_state.theme = "dark"
+        st.rerun()
+    elif not is_dark and st.session_state.theme == "dark":
+        st.session_state.theme = "light"
         st.rerun()
 
 
@@ -1015,13 +1020,19 @@ def render_ask_question():
 
         with st.chat_message("assistant"):
             with st.spinner("🔎 Searching knowledge base and generating answer..."):
-                answer, error = ask_question(question)
+                answer_stream, error = ask_question(question)
 
-            if answer is not None:
-                st.markdown(
-                    f'<div class="answer-box">{html.escape(answer)}</div>',
-                    unsafe_allow_html=True,
-                )
+            if answer_stream is not None:
+                def stream_data():
+                    if isinstance(answer_stream, str):
+                        yield answer_stream
+                    else:
+                        for chunk in answer_stream:
+                            if chunk.text:
+                                yield chunk.text
+                
+                # Streamlit's built-in fast streaming!
+                answer = st.write_stream(stream_data())
                 st.session_state.messages.append({"role": "assistant", "content": answer})
             else:
                 st.error(f"❌ {error}")

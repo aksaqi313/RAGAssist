@@ -885,12 +885,12 @@ def call_gemini_with_fallback(prompt):
     for model_name in models:
         for attempt in range(max_retries):
             try:
-                response = get_client().models.generate_content(
+                response = get_client().models.generate_content_stream(
                     model=model_name,
                     contents=prompt
                 )
-                if response and response.text:
-                    return response.text
+                if response:
+                    return response
             except Exception as error:
                 error_str = str(error).lower()
                 # If rate limited (429), sleep for 6 seconds and retry automatically
