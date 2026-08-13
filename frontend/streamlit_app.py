@@ -26,6 +26,8 @@ try:
         get_document_info,
         get_all_documents,
         delete_document as rag_delete_document,
+        search_documents,
+        summarize_knowledge_base,
         DOCUMENTS_DIR,
     )
     RAG_IMPORT_ERROR = None
@@ -65,6 +67,9 @@ if "active_page" not in st.session_state:
 
 if "theme" not in st.session_state:
     st.session_state.theme = "dark"
+
+if "kb_summary" not in st.session_state:
+    st.session_state.kb_summary = ""
 
 
 # ============================================================
@@ -129,6 +134,15 @@ def upload_and_process(uploaded_file):
                 file_path.unlink()
             except Exception:
                 pass
+        return None, str(error)
+
+
+def summarize_current_knowledge_base():
+    """Generate a concise summary of the active knowledge base."""
+    try:
+        summary = summarize_knowledge_base()
+        return summary, None
+    except Exception as error:
         return None, str(error)
 
 
@@ -885,7 +899,7 @@ def render_home():
                 unsafe_allow_html=True,
             )
 
-    # 4. Main Information Area (Side-by-Side: How Mini-RAG Works + Your Knowledge Base)
+    # 4. Main Information Area (Side-by-Side: How RAG-Assist Works + Your Knowledge Base)
     workflow_col, kb_col = st.columns([3, 2], gap="medium")
 
     with workflow_col:
@@ -900,7 +914,7 @@ def render_home():
 
         step_html = (
             '<div class="panel workflow-panel">'
-            '<div class="section-title">🧭 How Mini-RAG Works</div>'
+            '<div class="section-title">🧭 How RAG-Assist Works</div>'
             '<div class="section-subtitle">From raw documents to intelligent answers</div>'
             '<div class="workflow-list">'
         )
@@ -992,6 +1006,68 @@ def render_home():
 # PAGE: ASK QUESTION (SCROLLABLE CHAT HISTORY)
 # ============================================================
 
+def clear_chat_history():
+    """Reset the current conversation in the chat view."""
+    st.session_state.messages = []
+
+
+def show_source_badges(question_text):
+    """Display the most relevant document sources used for the current answer."""
+    try:
+        results = search_documents(question_text, top_k=3)
+        sources = []
+        for result in results:
+            name = result.get("source")
+            if name and name not in sources:
+                sources.append(name)
+
+        if sources:
+            st.caption("📚 Sources: " + ", ".join(sources))
+    except Exception:
+        pass
+
+
+def handle_user_question(question_text):
+    """Run an answer request and show source references for the result."""
+    if not question_text or not question_text.strip():
+        return
+
+    question = question_text.strip()
+    st.session_state.messages.append({"role": "user", "content": question})
+
+    with st.chat_message("user"):
+        st.markdown(question)
+
+    with st.chat_message("assistant"):
+        with st.spinner("🔎 Searching knowledge base..."):
+            answer_stream, error = ask_question(question)
+
+        if error:
+            st.error(f"❌ {error}")
+            return
+
+        if answer_stream is None:
+            st.error("❌ No answer was returned. Please try again.")
+            return
+
+        def stream_data():
+            if isinstance(answer_stream, str):
+                yield answer_stream
+            else:
+                try:
+                    for chunk in answer_stream:
+                        if hasattr(chunk, 'text') and chunk.text:
+                            yield chunk.text
+                except Exception:
+                    pass
+
+        answer = st.write_stream(stream_data())
+        if answer:
+            st.session_state.messages.append({"role": "assistant", "content": answer})
+
+        show_source_badges(question)
+
+
 def render_ask_question():
     st.markdown(
         '<div class="section-title">💬 Ask Your AI Assistant</div>'
@@ -1003,6 +1079,27 @@ def render_ask_question():
 
     render_backend_status()
 
+    quick_prompts = [
+        "Summarize the main ideas in this document",
+        "What are the key findings?",
+        "Give me 3 actionable insights",
+        "Explain this in simple language",
+    ]
+
+    prompt_cols = st.columns(len(quick_prompts))
+    for col, prompt in zip(prompt_cols, quick_prompts):
+        with col:
+            if st.button(prompt, use_container_width=True):
+                handle_user_question(prompt)
+
+    st.write("")
+
+    clear_col, _ = st.columns([1, 4])
+    with clear_col:
+        if st.button("🗑️ Clear chat", use_container_width=True):
+            clear_chat_history()
+            st.rerun()
+
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
@@ -1013,36 +1110,7 @@ def render_ask_question():
     )
 
     if question:
-        st.session_state.messages.append({"role": "user", "content": question})
-
-        with st.chat_message("user"):
-            st.markdown(question)
-
-        with st.chat_message("assistant"):
-            # Phase 1: Search the knowledge base (show spinner while doing RAG retrieval)
-            with st.spinner("🔎 Searching knowledge base..."):
-                answer_stream, error = ask_question(question)
-
-            if error:
-                st.error(f"❌ {error}")
-            elif answer_stream is not None:
-                # Phase 2: Stream the answer token-by-token (no spinner — words appear live)
-                def stream_data():
-                    if isinstance(answer_stream, str):
-                        yield answer_stream
-                    else:
-                        try:
-                            for chunk in answer_stream:
-                                if hasattr(chunk, 'text') and chunk.text:
-                                    yield chunk.text
-                        except Exception:
-                            pass
-
-                answer = st.write_stream(stream_data())
-                if answer:
-                    st.session_state.messages.append({"role": "assistant", "content": answer})
-            else:
-                st.error("❌ No answer was returned. Please try again.")
+        handle_user_question(question)
 
 
 # ============================================================
@@ -1060,12 +1128,28 @@ def render_knowledge_base():
 
     render_backend_status()
 
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button("📄 Generate Summary", use_container_width=True, type="primary"):
+            with st.spinner("Summarizing the knowledge base..."):
+                summary, error = summarize_current_knowledge_base()
+            if error:
+                st.error(f"❌ {error}")
+            elif summary:
+                st.session_state.kb_summary = summary
+                st.success("✅ Summary generated")
+
+    with col2:
+        if st.button("🔄 Refresh Knowledge Base", use_container_width=True):
+            st.rerun()
+
+    if st.session_state.kb_summary:
+        st.markdown("### Knowledge Base Summary")
+        st.write(st.session_state.kb_summary)
+
     render_document_list(show_delete=True)
 
     st.write("")
-
-    if st.button("🔄 Refresh Knowledge Base", use_container_width=True):
-        st.rerun()
 
 
 # ============================================================
@@ -1202,7 +1286,7 @@ PAGES[st.session_state.active_page]()
 
 st.markdown(
     '<div class="footer">'
-    'Mini-RAG • Streamlit • FAISS • Sentence Transformers • Gemini'
+    'RAG-Assist • Streamlit • FAISS • Sentence Transformers • Gemini'
     '</div>',
     unsafe_allow_html=True,
 )

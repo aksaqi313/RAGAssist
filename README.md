@@ -1,5 +1,7 @@
 # RAG-Assist
 
+Copyright © 2026 Azhar Khan
+
 AI-powered document knowledge assistant using Retrieval-Augmented Generation (RAG), FAISS, Sentence Transformers, and Google Gemini.
 
 ## 🚀 Overview

@@ -931,7 +931,7 @@ def generate_answer(question):
 
     if not chunks or index is None:
         prompt = f"""
-You are Mini-RAG, an AI assistant focused on
+You are RAG-Assist, an AI assistant focused on
 Artificial Intelligence and Machine Learning.
 
 There are currently no uploaded documents in the
@@ -979,7 +979,7 @@ CONTENT:
     )
 
     prompt = f"""
-You are Mini-RAG, an AI assistant focused on
+You are RAG-Assist, an AI assistant focused on
 Artificial Intelligence and Machine Learning.
 
 You have access to a persistent knowledge base
@@ -1022,6 +1022,40 @@ Provide a helpful answer.
 
     return call_gemini_with_fallback(prompt)
 
+
+def summarize_knowledge_base():
+    """Generate a concise summary of the active knowledge base."""
+    if not chunks or index is None:
+        return (
+            "No documents are currently loaded in the knowledge base. "
+            "Upload a PDF to generate a summary."
+        )
+
+    source_chunks = {}
+    for chunk, source_name in zip(chunks, chunk_sources):
+        source_chunks.setdefault(source_name, []).append(chunk)
+
+    context_parts = []
+    for source_name, source_texts in list(source_chunks.items())[:5]:
+        excerpt = "\n".join(source_texts[:3])
+        context_parts.append(f"DOCUMENT: {source_name}\n{excerpt}")
+
+    context = "\n\n".join(context_parts)
+
+    prompt = f"""
+You are RAG-Assist, an AI assistant that summarizes document knowledge bases.
+
+Create a brief but useful summary of the current knowledge base.
+Focus on the main themes, key concepts, and notable insights.
+Keep it concise but informative, and use plain language.
+Return 4 to 6 bullet points.
+
+KNOWLEDGE BASE CONTENT
+======================
+{context}
+"""
+
+    return call_gemini_with_fallback(prompt)
 
 
 # ============================================================
