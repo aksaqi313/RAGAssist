@@ -153,24 +153,24 @@ def summarize_current_knowledge_base():
 theme_vars = f"""
     <style>
     :root {{
-        --bg-color: {'#0E1117' if st.session_state.theme == 'dark' else '#F3F4F6'};
-        --panel-bg: {'#161A23' if st.session_state.theme == 'dark' else '#FFFFFF'};
-        --border-main: {'#262B3D' if st.session_state.theme == 'dark' else '#E5E7EB'};
-        --border-panel: {'#2D3346' if st.session_state.theme == 'dark' else '#E5E7EB'};
-        --text-title: {'#F8F9FA' if st.session_state.theme == 'dark' else '#111827'};
-        --text-primary: {'#FFFFFF' if st.session_state.theme == 'dark' else '#1F2937'};
-        --text-secondary: {'#8C92A4' if st.session_state.theme == 'dark' else '#4B5563'};
-        --text-muted: {'#A3A8B8' if st.session_state.theme == 'dark' else '#6B7280'};
-        --text-footer: {'#6B7280' if st.session_state.theme == 'dark' else '#9CA3AF'};
-        --hover-bg: {'rgba(255, 255, 255, 0.05)' if st.session_state.theme == 'dark' else 'rgba(0, 0, 0, 0.05)'};
-        --panel-bg-alpha: {'rgba(255, 255, 255, 0.03)' if st.session_state.theme == 'dark' else 'rgba(0, 0, 0, 0.02)'};
-        --input-border: {'#374151' if st.session_state.theme == 'dark' else '#D1D5DB'};
-        --hover-border: {'#4B5563' if st.session_state.theme == 'dark' else '#9CA3AF'};
-        --hero-grad-1: {'#1A1D27' if st.session_state.theme == 'dark' else '#FFFFFF'};
-        --hero-grad-2: {'#12151C' if st.session_state.theme == 'dark' else '#F9FAFB'};
-        --workflow-grad: {'#11141A' if st.session_state.theme == 'dark' else '#F9FAFB'};
-        --shadow-color: {'rgba(0, 0, 0, 0.1)' if st.session_state.theme == 'dark' else 'rgba(0, 0, 0, 0.05)'};
-        --shadow-strong: {'rgba(0, 0, 0, 0.2)' if st.session_state.theme == 'dark' else 'rgba(0, 0, 0, 0.1)'};
+        --bg-color: {'#000000' if st.session_state.theme == 'dark' else '#F4F4F4'};
+        --panel-bg: {'#0F0F0F' if st.session_state.theme == 'dark' else '#FFFFFF'};
+        --border-main: {'#1C1C1C' if st.session_state.theme == 'dark' else '#D1D5DB'};
+        --border-panel: {'#2A2A2A' if st.session_state.theme == 'dark' else '#E5E7EB'};
+        --text-title: {'#FFFFFF' if st.session_state.theme == 'dark' else '#111111'};
+        --text-primary: {'#F5F5F5' if st.session_state.theme == 'dark' else '#111111'};
+        --text-secondary: {'#D1D5DB' if st.session_state.theme == 'dark' else '#4B5563'};
+        --text-muted: {'#B0B0B0' if st.session_state.theme == 'dark' else '#6B7280'};
+        --text-footer: {'#A3A3A3' if st.session_state.theme == 'dark' else '#9CA3AF'};
+        --hover-bg: {'rgba(34, 197, 94, 0.10)' if st.session_state.theme == 'dark' else 'rgba(0, 0, 0, 0.04)'};
+        --panel-bg-alpha: {'rgba(255,255,255,0.02)' if st.session_state.theme == 'dark' else 'rgba(0,0,0,0.02)'};
+        --input-border: {'#2F2F2F' if st.session_state.theme == 'dark' else '#D1D5DB'};
+        --hover-border: {'#22C55E' if st.session_state.theme == 'dark' else '#16A34A'};
+        --hero-grad-1: {'#0C0C0C' if st.session_state.theme == 'dark' else '#FFFFFF'};
+        --hero-grad-2: {'#111111' if st.session_state.theme == 'dark' else '#F5F5F5'};
+        --workflow-grad: {'#101010' if st.session_state.theme == 'dark' else '#F7F7F7'};
+        --shadow-color: {'rgba(34, 197, 94, 0.08)' if st.session_state.theme == 'dark' else 'rgba(0,0,0,0.04)'};
+        --shadow-strong: {'rgba(34, 197, 94, 0.12)' if st.session_state.theme == 'dark' else 'rgba(0,0,0,0.08)'};
     }}
     </style>
 """
@@ -184,6 +184,10 @@ st.markdown(
 
     /* Clean Modern Theme */
     .stApp {
+        background:
+            radial-gradient(circle at top left, rgba(34, 197, 94, 0.12), transparent 28%),
+            radial-gradient(circle at top right, rgba(255, 255, 255, 0.04), transparent 32%),
+            linear-gradient(180deg, #000000 0%, #0B0B0B 100%);
         background-color: var(--bg-color);
     }
 
@@ -428,6 +432,48 @@ st.markdown(
         margin-bottom: 16px;
     }
 
+    .chat-page-header {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(255,255,255,0.03), rgba(17,17,17,0.90));
+        border: 1px solid rgba(34, 197, 94, 0.28);
+        border-radius: 22px;
+        padding: 22px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 12px 32px rgba(34, 197, 94, 0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .chat-page-title {
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #F8FAFC;
+        margin-bottom: 8px;
+        letter-spacing: -0.03em;
+    }
+
+    .chat-page-subtitle {
+        font-size: 14px;
+        color: #CBD5E1;
+        line-height: 1.6;
+    }
+
+    .chat-prompt-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 16px 0 20px;
+    }
+
+    .chat-prompt-button {
+        border: 1px solid rgba(34, 197, 94, 0.24);
+        background: rgba(20, 20, 20, 0.9);
+        color: #F5F5F5;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
     .workflow-panel {
         background: linear-gradient(180deg, var(--panel-bg) 0%, var(--workflow-grad) 100%) !important;
     }
@@ -602,10 +648,25 @@ st.markdown(
     }
 
     [data-testid="stChatMessage"] {
-        background: var(--panel-bg);
-        border: 1px solid var(--border-panel);
-        border-radius: 12px;
-        padding: 12px;
+        background: linear-gradient(180deg, rgba(15, 15, 15, 0.95), rgba(0, 0, 0, 0.95));
+        border: 1px solid rgba(34, 197, 94, 0.18);
+        border-radius: 18px;
+        padding: 14px 16px;
+        box-shadow: 0 4px 14px rgba(34, 197, 94, 0.08);
+        margin-bottom: 12px;
+    }
+
+    [data-testid="stChatMessage"] p {
+        color: #E2E8F0 !important;
+        line-height: 1.6;
+    }
+
+    [data-testid="stChatMessage"] .stMarkdown {
+        color: #E2E8F0 !important;
+    }
+
+    [data-testid="stChatMessage"]:has(img) {
+        background: rgba(17, 24, 39, 0.7);
     }
 
     .stMarkdown, .stCaption, label, .stTextInput label {
@@ -633,16 +694,16 @@ st.markdown(
     }
 
     div[data-testid="stChatInput"] {
-        background: var(--panel-bg) !important;
-        border: 1px solid var(--input-border) !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        background: linear-gradient(180deg, rgba(20, 20, 20, 0.96), rgba(10, 10, 10, 0.96)) !important;
+        border: 1px solid rgba(34, 197, 94, 0.42) !important;
+        border-radius: 18px !important;
+        box-shadow: 0 10px 24px rgba(34, 197, 94, 0.10) !important;
         transition: all 0.2s ease-in-out !important;
     }
 
     div[data-testid="stChatInput"]:focus-within {
-        border-color: #3B82F6 !important;
-        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15) !important;
+        border-color: rgba(34, 197, 94, 0.75) !important;
+        box-shadow: 0 12px 28px rgba(34, 197, 94, 0.16) !important;
     }
 
     div[data-testid="stChatInput"] textarea {
@@ -653,20 +714,22 @@ st.markdown(
     }
 
     div[data-testid="stChatInput"] textarea::placeholder {
-        color: var(--text-muted) !important;
+        color: #94A3B8 !important;
         font-size: 14px !important;
     }
 
     div[data-testid="stChatInput"] button {
-        background: #2563EB !important;
-        color: #FFFFFF !important;
+        background: linear-gradient(135deg, #22C55E, #16A34A) !important;
+        color: #000000 !important;
         border: none !important;
-        border-radius: 8px !important;
-        transition: background 0.2s !important;
+        border-radius: 12px !important;
+        transition: transform 0.2s, box-shadow 0.2s !important;
+        box-shadow: 0 8px 18px rgba(34, 197, 94, 0.25) !important;
     }
 
     div[data-testid="stChatInput"] button:hover {
-        background: #1D4ED8 !important;
+        transform: translateY(-1px);
+        background: linear-gradient(135deg, #4ADE80, #22C55E) !important;
     }
 
     div[data-testid="stChatInput"] button svg {
@@ -802,8 +865,11 @@ def render_document_list(show_delete=True):
         if not isinstance(document, dict):
             continue
 
-        document_id = document.get("id")
         filename = document.get("filename", "Unknown document")
+        if filename == DEFAULT_DOCUMENT:
+            continue
+
+        document_id = document.get("id")
         uploaded_at = document.get("uploaded_at", "Unknown")
         chunks = document.get("chunks", 0)
         vectors = document.get("vectors", 0)
@@ -825,10 +891,7 @@ def render_document_list(show_delete=True):
             )
 
         with middle:
-            if filename == DEFAULT_DOCUMENT:
-                st.success("Default Document")
-            else:
-                st.info("Active")
+            st.info("Active")
 
         with right:
             if not show_delete:
@@ -899,85 +962,81 @@ def render_home():
                 unsafe_allow_html=True,
             )
 
-    # 4. Main Information Area (Side-by-Side: How RAG-Assist Works + Your Knowledge Base)
-    workflow_col, kb_col = st.columns([3, 2], gap="medium")
+    # 4. Main Information Area (sequence: workflow first, knowledge base second)
+    steps = [
+        ("01", "📤", "Upload Documents", "Upload PDFs, DOCX, TXT files.", "#8B5CF6"),
+        ("02", "📄", "Extract Text", "Extract and clean raw text.", "#3B82F6"),
+        ("03", "🧩", "Chunk Text", "Split into semantically relevant chunks.", "#10B981"),
+        ("04", "🧠", "Generate Embeddings", "Create vector representations.", "#A78BFA"),
+        ("05", "🗄️", "Store in FAISS", "Index vectors for instant retrieval.", "#F59E0B"),
+        ("06", "🔎", "Retrieve & Answer", "Fetch relevant context & answer.", "#F43F5E"),
+    ]
 
-    with workflow_col:
-        steps = [
-            ("01", "📤", "Upload Documents", "Upload PDFs, DOCX, TXT files.", "#8B5CF6"),
-            ("02", "📄", "Extract Text", "Extract and clean raw text.", "#3B82F6"),
-            ("03", "🧩", "Chunk Text", "Split into semantically relevant chunks.", "#10B981"),
-            ("04", "🧠", "Generate Embeddings", "Create vector representations.", "#A78BFA"),
-            ("05", "🗄️", "Store in FAISS", "Index vectors for instant retrieval.", "#F59E0B"),
-            ("06", "🔎", "Retrieve & Answer", "Fetch relevant context & answer.", "#F43F5E"),
-        ]
+    step_html = (
+        '<div class="panel workflow-panel">'
+        '<div class="section-title">🧭 How RAG-Assist Works</div>'
+        '<div class="section-subtitle">From raw documents to intelligent answers</div>'
+        '<div class="workflow-list">'
+    )
 
-        step_html = (
-            '<div class="panel workflow-panel">'
-            '<div class="section-title">🧭 How RAG-Assist Works</div>'
-            '<div class="section-subtitle">From raw documents to intelligent answers</div>'
-            '<div class="workflow-list">'
+    for num, icon, title, desc, color in steps:
+        step_html += (
+            '<div class="workflow-item">'
+            f'<div class="workflow-item-icon" style="background:{color};">{icon}</div>'
+            f'<div><span class="workflow-item-title">{num}. {title}</span> '
+            f'<span class="workflow-item-desc">— {desc}</span></div>'
+            '</div>'
         )
 
-        for num, icon, title, desc, color in steps:
-            step_html += (
-                '<div class="workflow-item">'
-                f'<div class="workflow-item-icon" style="background:{color};">{icon}</div>'
-                f'<div><span class="workflow-item-title">{num}. {title}</span> '
-                f'<span class="workflow-item-desc">— {desc}</span></div>'
-                '</div>'
-            )
+    step_html += '</div></div>'
+    st.markdown(step_html, unsafe_allow_html=True)
 
-        step_html += '</div></div>'
-        st.markdown(step_html, unsafe_allow_html=True)
+    kb_html = (
+        '<div class="panel kb-panel">'
+        '<div class="section-title">📚 Your Knowledge Base</div>'
+        '<div class="section-subtitle">Live active document summary</div>'
+    )
 
-    with kb_col:
-        kb_html = (
-            '<div class="panel kb-panel">'
-            '<div class="section-title">📚 Your Knowledge Base</div>'
-            '<div class="section-subtitle">Live active document summary</div>'
-        )
+    if documents:
+        for document in documents[:3]:
+            if not isinstance(document, dict):
+                continue
 
-        if documents:
-            for document in documents[:3]:
-                if not isinstance(document, dict):
-                    continue
+            filename = document.get("filename", "Unknown")
+            if filename == DEFAULT_DOCUMENT:
+                continue
 
-                filename = html.escape(document.get("filename", "Unknown"))
-                chunks = document.get("chunks", 0)
-                is_default = document.get("filename") == DEFAULT_DOCUMENT
-                badge_class = "default" if is_default else ""
-                badge_text = "Default" if is_default else "Active"
+            chunks = document.get("chunks", 0)
 
-                kb_html += (
-                    '<div class="kb-row">'
-                    f'<div><div class="kb-doc-name">📄 {filename}</div>'
-                    f'<div class="kb-doc-meta">{chunks} chunks</div></div>'
-                    f'<span class="kb-badge {badge_class}">{badge_text}</span>'
-                    '</div>'
-                )
-        else:
             kb_html += (
-                '<div style="padding: 10px 0; color: #85819F; font-size: 11.5px;">'
-                '📬 No documents yet — upload one to get started.'
+                '<div class="kb-row">'
+                f'<div><div class="kb-doc-name">📄 {html.escape(filename)}</div>'
+                f'<div class="kb-doc-meta">{chunks} chunks</div></div>'
+                '<span class="kb-badge">Active</span>'
                 '</div>'
             )
-
+    else:
         kb_html += (
-            '<div class="kb-stats-row">'
-            f'<div class="kb-stat"><div class="kb-stat-value">{document_count}</div>'
-            '<div class="kb-stat-label">Docs</div></div>'
-            f'<div class="kb-stat"><div class="kb-stat-value">{total_chunks}</div>'
-            '<div class="kb-stat-label">Chunks</div></div>'
-            f'<div class="kb-stat"><div class="kb-stat-value">{total_vectors}</div>'
-            '<div class="kb-stat-label">Vectors</div></div>'
-            '<div class="kb-stat"><div class="kb-stat-value">FAISS</div>'
-            '<div class="kb-stat-label">DB</div></div>'
-            '</div>'
+            '<div style="padding: 10px 0; color: #85819F; font-size: 11.5px;">'
+            '📬 No documents yet — upload one to get started.'
             '</div>'
         )
 
-        st.markdown(kb_html, unsafe_allow_html=True)
+    kb_html += (
+        '<div class="kb-stats-row">'
+        f'<div class="kb-stat"><div class="kb-stat-value">{document_count}</div>'
+        '<div class="kb-stat-label">Docs</div></div>'
+        f'<div class="kb-stat"><div class="kb-stat-value">{total_chunks}</div>'
+        '<div class="kb-stat-label">Chunks</div></div>'
+        f'<div class="kb-stat"><div class="kb-stat-value">{total_vectors}</div>'
+        '<div class="kb-stat-label">Vectors</div></div>'
+        '<div class="kb-stat"><div class="kb-stat-value">FAISS</div>'
+        '<div class="kb-stat-label">DB</div></div>'
+        '</div>'
+        '</div>'
+    )
+
+    st.markdown(kb_html, unsafe_allow_html=True)
 
     # 5. Ready Section & Action Buttons
     ready_col1, ready_col2, ready_col3 = st.columns([2.6, 1, 1], vertical_alignment="center")
@@ -1070,9 +1129,9 @@ def handle_user_question(question_text):
 
 def render_ask_question():
     st.markdown(
-        '<div class="section-title">💬 Ask Your AI Assistant</div>'
-        '<div class="section-subtitle">'
-        'Ask questions grounded in your active documents or general AI topics.'
+        '<div class="chat-page-header">'
+        '<div class="chat-page-title">💬 Ask Your AI Assistant</div>'
+        '<div class="chat-page-subtitle">Ask questions grounded in your active documents or general AI topics.</div>'
         '</div>',
         unsafe_allow_html=True,
     )
@@ -1086,11 +1145,13 @@ def render_ask_question():
         "Explain this in simple language",
     ]
 
-    prompt_cols = st.columns(len(quick_prompts))
-    for col, prompt in zip(prompt_cols, quick_prompts):
-        with col:
-            if st.button(prompt, use_container_width=True):
+    prompt_buttons = st.container()
+    with prompt_buttons:
+        st.markdown('<div class="chat-prompt-row">', unsafe_allow_html=True)
+        for prompt in quick_prompts:
+            if st.button(prompt, key=f"prompt_{prompt}", use_container_width=False, type="secondary"):
                 handle_user_question(prompt)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.write("")
 
